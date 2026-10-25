@@ -1,3 +1,5 @@
+import { secureUrl } from '../lib/trustedUrls.js';
+
 const AUTOSCRIPT_COMMIT = "fe60ef3fdbae3c491e97c262a2179e2787b85776";
 const DEFAULT_AUTOSCRIPT_URL =
   `https://cdn.jsdelivr.net/gh/ctt-gob-es/clienteafirma@${AUTOSCRIPT_COMMIT}` +
@@ -63,24 +65,35 @@ export const loadAutoFirma = () => {
 
   autoScriptPromise = new Promise((resolve, reject) => {
     const configuredUrl = import.meta.env.VITE_AUTOFIRMA_SCRIPT_URL?.trim();
+    const url = secureUrl(configuredUrl || DEFAULT_AUTOSCRIPT_URL);
+    const integrity = configuredUrl
+      ? import.meta.env.VITE_AUTOFIRMA_SCRIPT_INTEGRITY?.trim() : DEFAULT_AUTOSCRIPT_INTEGRITY;
+    if (!/^sha(?:384-[A-Za-z0-9+/]{64}|512-[A-Za-z0-9+/]{86}==)$/.test(integrity || '')) {
+      throw new Error('AutoFirma requiere una integridad SRI SHA-384 o SHA-512 válida.');
+    }
     const script = document.createElement("script");
-    script.src = configuredUrl || DEFAULT_AUTOSCRIPT_URL;
+    script.src = url.href;
     script.async = true;
     script.crossOrigin = "anonymous";
-    if (!configuredUrl) script.integrity = DEFAULT_AUTOSCRIPT_INTEGRITY;
+    script.integrity = integrity;
+    script.referrerPolicy = 'no-referrer';
 
     script.addEventListener("load", () => {
       if (window.AutoScript) {
         resolve(window.AutoScript);
       } else {
+        script.remove();
         reject(new Error("AutoFirma se ha cargado sin exponer AutoScript."));
       }
     });
     script.addEventListener("error", () => {
-      autoScriptPromise = undefined;
+      script.remove();
       reject(new Error("No se pudo cargar el componente web de AutoFirma."));
     });
     document.head.appendChild(script);
+  }).catch(error => {
+    autoScriptPromise = undefined;
+    throw error;
   });
 
   return autoScriptPromise;

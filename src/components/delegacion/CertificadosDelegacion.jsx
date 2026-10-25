@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import {
   downloadDlgaTemplate,
   extractDlgaError,
-  getDlgaEndpointUrl,
+  submitDlgaForm,
   getDlgaPublicUrl,
   getFilenameFromResponse,
   postDlgaForm,
@@ -187,39 +187,17 @@ export default function CertificadosDelegacion() {
     }
   };
 
-  const submitExternalAction = (endpoint, extraValues = {}) => {
+  const submitExternalAction = async (endpoint, extraValues = {}) => {
     if (!validateForm()) return;
-
-    const form = formRef.current;
-    const previous = {
-      action: form.action,
-      target: form.target,
-      method: form.method,
-      enctype: form.enctype,
-    };
-
-    const hiddenInputs = Object.entries(extraValues).map(([name, value]) => {
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = name;
-      input.value = value;
-      form.appendChild(input);
-      return input;
-    });
-
-    form.action = getDlgaEndpointUrl(endpoint);
-    form.target = "_blank";
-    form.method = "post";
-    form.enctype = "multipart/form-data";
-    form.submit();
-
-    window.setTimeout(() => {
-      hiddenInputs.forEach((input) => input.remove());
-      form.action = previous.action;
-      form.target = previous.target;
-      form.method = previous.method;
-      form.enctype = previous.enctype;
-    }, 0);
+    setLoadingAction(endpoint);
+    try {
+      await submitDlgaForm(formRef.current, endpoint, extraValues);
+    } catch (error) {
+      toast.error(error.message || t('delegation.certificates.errors.operation_failed'));
+    } finally {
+      setPasswordEmail('');
+      setLoadingAction('');
+    }
   };
 
   const openMicrosoftLogin = () => {

@@ -10,11 +10,10 @@ export const AuthProvider = ({ children }) => {
         const apiObtenerSesion = async () => {
             try {
                 const data = await obtenerSesion();
-                setAuth({ loading: false,isAuthenticated: data.isAuthenticated,user: data.user });
-            } catch (error) {
-                if (error.response?.status === 401) {
-                  setAuth({ loading: false, isAuthenticated: false, user: null });
-                }
+                const authenticated = !data?.err && data?.isAuthenticated === true && Boolean(data?.user);
+                setAuth({ loading: false, isAuthenticated: authenticated, user: authenticated ? data.user : null });
+            } catch {
+                setAuth({ loading: false, isAuthenticated: false, user: null });
             }
         };
         apiObtenerSesion();

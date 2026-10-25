@@ -1,12 +1,5 @@
 import { feedbackCreatedAt, feedbackField, feedbackId, feedbackStatus } from "./feedback.js";
-
-const protectSpreadsheetCell = (value) => {
-    const text = String(value ?? "");
-    return /^[=+\-@\t\r]/.test(text) ? `'${text}` : text;
-};
-
-const escapeCsvCell = (value) =>
-    `"${protectSpreadsheetCell(value).replaceAll('"', '""')}"`;
+import { escapeCsvCell } from './csv.js';
 
 export const buildFeedbackCsv = (items, translate = (key) => key) => {
     const columns = [

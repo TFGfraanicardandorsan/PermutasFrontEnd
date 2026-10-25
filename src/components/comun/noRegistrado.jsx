@@ -28,7 +28,7 @@ export default function RegistroTelegram() {
               @PERMUTASETSII_BOT
             </p>
           </div>
-          <div clsassName="boton-volver" style={{ marginTop: 20 }}>
+          <div className="boton-volver" style={{ marginTop: 20 }}>
             <a href="/login" className="login-button" style={{ textDecoration: "none", padding: "10px 20px", backgroundColor: "#6099c4", color: "#fff", borderRadius: 4 }}>
               {t("registration.back_login")}
             </a>

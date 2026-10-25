@@ -32,6 +32,10 @@ export default function DetalleIncidencia() {
         if (nombreArchivo) {
           const { bytes, contentType } = await servirArchivoConTipo("archivador", nombreArchivo);
           const tipo = detectarTipoArchivo(bytes, contentType, nombreArchivo);
+          if (tipo === 'application/octet-stream') {
+            setArchivo(null);
+            return;
+          }
           const blob = new Blob([bytes], { type: tipo });
           urlArchivo = URL.createObjectURL(blob);
 

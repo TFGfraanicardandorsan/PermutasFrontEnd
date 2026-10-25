@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it } from "vitest";
 
 import { pdfBase64ToFile, pdfBytesToBase64 } from "./pdfBase64.js";

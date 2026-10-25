@@ -9,6 +9,7 @@ import CrearAsignatura from "./CrearAsignatura";
 import ImportAsignaturas from "./importAsignaturas";
 import { subidaArchivo } from "../../services/subidaArchivos";
 import { useTranslation } from "react-i18next";
+import { buildObjectCsv } from '../../lib/csv.js';
 
 export default function MiPerfilAdmin() {
   const { t } = useTranslation();
@@ -72,11 +73,7 @@ export default function MiPerfilAdmin() {
       grupos_deseados: permuta.grupos_deseados.join(" | "),
     }));
 
-    const encabezados = Object.keys(datosAplanados[0]).join(",");
-    const filas = datosAplanados.map((fila) =>
-      Object.values(fila).map((valor) => `"${valor}"`).join(",")
-    );
-    const contenidoCSV = [encabezados, ...filas].join("\n");
+    const contenidoCSV = buildObjectCsv(datosAplanados);
 
     const BOM = "\uFEFF";
     const blob = new Blob([BOM + contenidoCSV], { type: "text/csv;charset=utf-8;" });
@@ -87,6 +84,7 @@ export default function MiPerfilAdmin() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const handleUploadPlantilla = async () => {

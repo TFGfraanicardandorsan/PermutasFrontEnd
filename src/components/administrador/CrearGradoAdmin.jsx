@@ -23,7 +23,7 @@ export default function CrearGradoAdmin() {
       setMensaje(t("admin.degrees.success"));
       setEstudio("");
       setSiglas("");
-    } catch (err) {
+    } catch {
       setError(t("admin.degrees.error"));
     }
   };

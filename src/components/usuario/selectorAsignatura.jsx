@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { logError } from "../../lib/logger";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBook, faFilter, faSave } from "@fortawesome/free-solid-svg-icons";
+import { faFilter, faSave } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from "react-i18next";
 import { translateCourse } from "../../lib/i18nLabels";
 

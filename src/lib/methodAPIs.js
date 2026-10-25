@@ -1,5 +1,6 @@
 import i18n from "../i18n";
 import { csrfFetch } from "./csrf.js";
+import { apiUrl } from './trustedUrls.js';
 
 const mutationAPI = async (method, fun, body = null, isFile = false) => {
     try {
@@ -17,7 +18,7 @@ const mutationAPI = async (method, fun, body = null, isFile = false) => {
             }
         }
 
-        const respuesta = await csrfFetch(import.meta.env.VITE_API_URL + fun, config);
+        const respuesta = await csrfFetch(apiUrl(fun), config);
 
         if (!respuesta.ok) {
             let errorMessage = `Error ${respuesta.status}: ${respuesta.statusText}`;
@@ -56,21 +57,19 @@ export const patchAPI = async (fun, body = null) => {
 export const getAPI = async (fun) => {
     let data;
     try {
-        const respuesta = await fetch(import.meta.env.VITE_API_URL + fun, {
+        const respuesta = await csrfFetch(apiUrl(fun), {
             method: 'get',
             credentials: 'include',
         })
-        // Verificar si la respuesta es una redirección
-        if (respuesta.redirected) {
-            window.location.href = respuesta.url
-            return;
+        if (!respuesta.ok) {
+            return { err: true, status: respuesta.status, errmsg: i18n.t('api.not_json') };
         }
         // Verificar si la respuesta es un JSON
         const contentType = respuesta.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
             data = await respuesta.json();
         } else {
-            data = { err: true, errmsg: `${i18n.t("api.not_json")}: ${respuesta}`, respuestaText: await respuesta.text(), }
+            data = { err: true, errmsg: i18n.t("api.not_json") }
         }
     } catch (e) {
         data = { err: true, errmsg: i18n.t("api.get_exception", { message: e.message || e }), }
@@ -79,7 +78,7 @@ export const getAPI = async (fun) => {
 }
 
 export const getPDF = async (fun) => {
-    const respuesta = await fetch(import.meta.env.VITE_API_URL + fun, {
+    const respuesta = await csrfFetch(apiUrl(fun), {
         method: 'get',
         credentials: 'include',
     });
@@ -88,7 +87,7 @@ export const getPDF = async (fun) => {
 }
 
 export const getArchivo = async (fun) => {
-    const respuesta = await fetch(import.meta.env.VITE_API_URL + fun, {
+    const respuesta = await csrfFetch(apiUrl(fun), {
         method: 'get',
         credentials: 'include',
     });

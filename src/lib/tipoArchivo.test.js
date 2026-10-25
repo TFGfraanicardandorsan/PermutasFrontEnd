@@ -16,10 +16,15 @@ describe("detectarTipoArchivo", () => {
       .toBe("application/pdf");
   });
 
-  it("normaliza el Content-Type devuelto por el servidor", () => {
+  it("no confía en un Content-Type sin firma de archivo", () => {
     const contenido = new Uint8Array([0x00]);
 
     expect(detectarTipoArchivo(contenido.buffer, "image/png; charset=binary", "uuid-789"))
-      .toBe("image/png");
+      .toBe("application/octet-stream");
+  });
+
+  it.each(['adjunto.pdf', 'adjunto.png', 'sin-extension'])("rechaza HTML disfrazado de %s", (filename) => {
+    const html = new TextEncoder().encode('<html><script>alert(1)</script></html>');
+    expect(detectarTipoArchivo(html.buffer, 'application/pdf', filename)).toBe('application/octet-stream');
   });
 });

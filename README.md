@@ -93,7 +93,7 @@ rutas específicas para cada rol; el backend debe validar siempre los permisos r
 
 ### Requisitos
 
-- [Node.js](https://nodejs.org/) 20 LTS recomendado.
+- [Node.js](https://nodejs.org/) 22 o 24, actualizado con los últimos parches de su rama.
 - npm, incluido con Node.js.
 - Un backend compatible con los endpoints `/api/v1`.
 - Acceso a la autenticación SAML para probar el flujo completo.
@@ -103,7 +103,7 @@ rutas específicas para cada rol; el backend debe validar siempre los permisos r
 ```bash
 git clone https://github.com/TFGfraanicardandorsan/TFMFrontEnd.git
 cd TFMFrontEnd
-npm install
+npm ci --ignore-scripts
 ```
 
 Crea un archivo `.env` en la raíz cuando el backend no se sirva desde el mismo origen:
@@ -115,13 +115,16 @@ VITE_API_URL=http://localhost:3000
 VITE_DLGA_API_URL=/api/v1/delegados
 VITE_DLGA_PUBLIC_URL=http://127.0.0.1:8001
 
-# Opcional: sobrescribe el script de AutoFirma fijado por el proyecto
+# Opcional: sobrescribe el script de AutoFirma; requiere también su SRI verificado
 # VITE_AUTOFIRMA_SCRIPT_URL=https://example.com/autoscript.js
+# VITE_AUTOFIRMA_SCRIPT_INTEGRITY=sha384-...
 ```
 
 > [!IMPORTANT]
 > `VITE_API_URL` debe ser únicamente el origen del backend, sin añadir `/api/v1`.
 > Si frontend y API comparten origen, puede dejarse vacío.
+> En producción se exige HTTPS. Consulta [`.env.example`](.env.example) para los
+> orígenes exactos admitidos en las redirecciones de logout SAML.
 
 Inicia el servidor de desarrollo:
 
@@ -129,8 +132,9 @@ Inicia el servidor de desarrollo:
 npm run dev
 ```
 
-Vite sirve el proyecto en [`http://localhost:3033`](http://localhost:3033), de acuerdo
-con la configuración actual del repositorio.
+Vite escucha solo en [`http://127.0.0.1:3033`](http://127.0.0.1:3033).
+Los servidores de desarrollo, preview y pruebas no deben publicarse en Internet.
+En producción se sirve únicamente `dist/` desde el servidor web.
 
 ## Comandos disponibles
 
@@ -143,6 +147,15 @@ con la configuración actual del repositorio.
 | `npm test` | Ejecuta las pruebas con Vitest en modo interactivo. |
 | `npm test -- --run` | Ejecuta una sola pasada de toda la suite. |
 | `npm run test:ui` | Abre la interfaz visual de Vitest. |
+| `npm run test:run` | Ejecuta toda la suite una vez. |
+| `npm run audit` | Consulta los avisos de seguridad de todas las dependencias. |
+
+## Seguridad y despliegue
+
+La [revisión de seguridad](docs/AUDITORIA-SEGURIDAD.md) documenta los hallazgos,
+parches, pruebas y límites de la auditoría. Los [comandos del servidor](docs/SEGURIDAD-SERVIDOR.md)
+incluyen instalación, despliegue, configuración de Apache/Rocky Linux y los
+controles que deben verificarse en el backend antes de dar la revisión por cerrada.
 
 ## Integraciones y consideraciones
 

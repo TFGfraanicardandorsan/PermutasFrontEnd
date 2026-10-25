@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { importAsignaturas } from "../../services/estadisticas";
 import "../../styles/admin-common.css";
 import { useTranslation } from "react-i18next";
@@ -33,7 +33,7 @@ const ImportarAsignaturas = () => {
       } else {
         setMensaje(t("admin.import_subjects.success"));
       }
-    } catch (error) {
+    } catch {
       setMensaje(t("admin.import_subjects.network_error"));
     } finally {
       setCargando(false);

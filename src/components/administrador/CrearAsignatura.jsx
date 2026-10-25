@@ -54,7 +54,7 @@ const CrearAsignatura = () => {
         codigo: "",
         estudios_id: ""
       });
-    } catch (error) {
+    } catch {
       setMensaje(t("admin.subjects.error"));
     }
   };

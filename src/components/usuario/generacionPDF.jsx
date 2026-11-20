@@ -539,10 +539,14 @@ export default function GeneracionPDF() {
   };
 
   const handleValidarPermuta = async () => {
-    await validarSolicitudPermuta(permutaId);
-    setShowModal(false);
-    toast.success(t("pdf_generation.errors.validate_success"));
-    navigate("/permutasAceptadas");
+    try {
+      resultadoAPI(await validarSolicitudPermuta(permutaId));
+      setShowModal(false);
+      toast.success(t("pdf_generation.errors.validate_success"));
+      navigate("/permutasAceptadas");
+    } catch (error) {
+      toast.error(error.message || t("pdf_generation.errors.sign_error"));
+    }
   };
 
   const handleDNIChange = (e) => {

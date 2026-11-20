@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { obtenerAsignaturasEstudio, actualizarAsignaturasUsuario } from "../../services/asignaturas";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { resultadoAPI } from "../../lib/bloquesPermuta.js";
 import { logError } from "../../lib/logger";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter, faSave } from "@fortawesome/free-solid-svg-icons";
@@ -61,14 +62,22 @@ export default function SelectorAsignatura() {
     if (selectedItems.length === 0) return;
     setLoading(true);
     // Nota: Idealmente esto debería ser una llamada batch, si la API lo permite en el futuro
+    const fallidas = [];
     for (const codigo of selectedItems) {
       try {
-        await actualizarAsignaturasUsuario(codigo);
+        resultadoAPI(await actualizarAsignaturasUsuario(codigo));
       } catch (error) {
+        fallidas.push(codigo);
         logError(`Error al enviar la asignatura ${codigo}: ${error}`);
       }
     }
     setLoading(false);
+    if (fallidas.length > 0) {
+      // Conservamos solo las que fallaron para que puedan reintentarse.
+      setSelectedItems(fallidas);
+      toast.error(t("user.subject_selection.partial_error", { count: fallidas.length }));
+      return;
+    }
     toast.success(t("user.subject_selection.success"));
     navigate("/seleccionarGrupos");
   };

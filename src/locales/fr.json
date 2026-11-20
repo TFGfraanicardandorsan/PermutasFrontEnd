@@ -146,6 +146,7 @@
     "subject_evaluations": "Évaluations des matières",
     "user_management": "Gestion des utilisateurs",
     "group_management": "Gestion des groupes",
+    "subject_management": "Gestion des matières",
     "swap_management": "Gestion des permutes",
     "delegate_management": "Gestion des délégués",
     "delegation_module": "Module délégués",
@@ -377,6 +378,7 @@
       "request_error": "Erreur dans la demande."
     },
     "subject_selection": {
+      "partial_error": "{{count}} matières n'ont pas pu être enregistrées. Vérifiez la sélection et réessayez.",
       "saving": "Enregistrement de la sélection...",
       "title": "Sélectionner des matières",
       "subtitle": "Choisissez les matières auxquelles vous souhaitez vous inscrire cette année.",

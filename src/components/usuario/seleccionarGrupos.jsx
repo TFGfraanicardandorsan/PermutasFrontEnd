@@ -3,6 +3,7 @@ import { obtenerTodosGruposMisAsignaturasUsuario, insertarMisGrupos } from "../.
 import { useNavigate } from "react-router-dom";
 import { logError } from "../../lib/logger.js";
 import { toast } from "react-toastify";
+import { resultadoAPI } from "../../lib/bloquesPermuta.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLayerGroup, faSave, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import "../../styles/user-common.css";
@@ -84,7 +85,7 @@ export default function SeleccionarGrupos() {
 
     try {
       for (let [codasignatura, numgrupo] of Object.entries(seleccionados)) {
-        await insertarMisGrupos(numgrupo, codasignatura);
+        resultadoAPI(await insertarMisGrupos(numgrupo, codasignatura));
       }
       toast.success(t("user.group_selection.success"));
       navigate("/miPerfil");

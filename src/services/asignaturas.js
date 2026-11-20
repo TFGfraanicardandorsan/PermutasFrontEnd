@@ -36,3 +36,7 @@ export const crearAsignatura = async (asignatura) => {
 export const comprobarAsignaturasSinGrupo = async () => {
     return await postAPI("/api/v1/usuarioAsignatura/asignaturasSinGrupoUsuario")
 }
+
+export const obtenerPanelAsignaturasAdmin = async () => {
+    return await postAPI("/api/v1/asignatura/admin/panel");
+}

@@ -3,6 +3,7 @@ import { crearNotificacion } from "../../services/notificacion";
 import "../../styles/admin-common.css";
 import "../../styles/crearNotificacion.css";
 import { toast } from "react-toastify";
+import { resultadoAPI } from "../../lib/bloquesPermuta.js";
 import { logError } from "../../lib/logger";
 import { useTranslation } from "react-i18next";
 
@@ -22,7 +23,7 @@ export default function CrearNotificacion() {
 
         setEnviando(true);
         try {
-            await crearNotificacion(receptor, contenido);
+            resultadoAPI(await crearNotificacion(receptor, contenido));
             toast.success(t("admin.notifications.success"));
             setContenido("");
             setReceptor("");

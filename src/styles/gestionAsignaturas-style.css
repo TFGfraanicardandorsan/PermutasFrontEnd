@@ -1,0 +1,38 @@
+/* Complementa gestionPermutas-style.css (estructura común de los paneles de administración). */
+.subject-admin-toolbar { grid-template-columns: minmax(240px, 1fr) 120px minmax(160px, 220px) 170px auto; }
+
+.subject-admin-count { display: flex; align-items: center; gap: 12px; margin: 0; padding: 10px 20px; border-top: 1px solid var(--swap-line); color: var(--swap-muted); font-size: .85rem; }
+.subject-admin-link { padding: 0; border: 0; background: none; color: #0e7490; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
+
+.subject-admin-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9rem; }
+.subject-admin-num { text-align: right !important; font-variant-numeric: tabular-nums; }
+
+.subject-admin-hint { margin: 16px 4px 0; color: var(--swap-muted); font-size: .9rem; }
+.subject-admin-hint a { color: #0e7490; font-weight: 700; }
+
+.subject-admin-dialog { width: min(620px, 100%); max-height: calc(100vh - 40px); overflow-y: auto; }
+.subject-admin-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+.subject-admin-span-2 { grid-column: 1 / -1; }
+.subject-admin-dialog input {
+  box-sizing: border-box; width: 100%; min-height: 44px; padding: 10px 12px;
+  border: 1px solid #d0d5dd; border-radius: 10px; background: #fff; color: var(--swap-ink); font: inherit;
+}
+.subject-admin-dialog select { box-sizing: border-box; width: 100%; min-height: 44px; }
+.subject-admin-dialog input:focus { outline: 3px solid rgba(6, 182, 212, .18); border-color: #0891b2; }
+.subject-admin-dialog [aria-invalid="true"] { border-color: #d92d20; }
+.subject-admin-dialog label small.subject-admin-field-error { color: #b42318; font-weight: 600; text-align: left; }
+.subject-admin-server-error { margin-top: 18px; padding: 12px 14px; border: 1px solid #fecdca; border-radius: 10px; background: #fef3f2; color: #b42318; font-weight: 600; }
+
+body.dark-mode .subject-admin-dialog input { background: #111827; border-color: #475569; color: #f1f5f9; }
+body.dark-mode .subject-admin-server-error { background: #381c22; border-color: #7f1d1d; color: #fecaca; }
+body.dark-mode .subject-admin-link, body.dark-mode .subject-admin-hint a { color: #67e8f9; }
+body.dark-mode .subject-admin-dialog label small.subject-admin-field-error { color: #fda29b; }
+
+@media (max-width: 1050px) {
+  .subject-admin-toolbar { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 720px) {
+  .subject-admin-toolbar { grid-template-columns: 1fr; }
+  .subject-admin-form-grid { grid-template-columns: 1fr; }
+  .subject-admin-num { text-align: left !important; }
+}

@@ -47,6 +47,7 @@ import CertificadosDelegacion from "./components/delegacion/CertificadosDelegaci
 import EncuestaSatisfaccion from "./components/comun/EncuestaSatisfaccion.jsx";
 import GestionFeedback from "./components/administrador/GestionFeedback.jsx";
 import GestionPermutas from "./components/administrador/GestionPermutas.jsx";
+import GestionAsignaturas from "./components/administrador/GestionAsignaturas.jsx";
 import { ADMIN_ROLE, APP_ROLES, DELEGATION_ROLES, STUDENT_ROLE } from "./lib/roles.js";
 
 
@@ -119,6 +120,7 @@ function AppContent() {
             <Route path="/gestionGrupos" element={<PanelGestionGrupos />} />
             <Route path="/gestionFeedback" element={<GestionFeedback />} />
             <Route path="/gestionPermutas" element={<GestionPermutas />} />
+            <Route path="/gestionAsignaturas" element={<GestionAsignaturas />} />
           </Route>
 
           {/* Layout para delegacion */}

@@ -146,6 +146,7 @@
     "subject_evaluations": "Subject evaluations",
     "user_management": "User management",
     "group_management": "Group management",
+    "subject_management": "Subject management",
     "swap_management": "Exchange management",
     "delegate_management": "Delegate management",
     "delegation_module": "Delegate module",
@@ -377,6 +378,7 @@
       "request_error": "Request error."
     },
     "subject_selection": {
+      "partial_error": "{{count}} subjects could not be saved. Check your selection and try again.",
       "saving": "Saving selection...",
       "title": "Select Subjects",
       "subtitle": "Choose the subjects you want to enroll in this academic year.",

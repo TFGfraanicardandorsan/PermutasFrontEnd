@@ -5,6 +5,7 @@ import "../../styles/user-common.css";
 import { subidaArchivo } from "../../services/subidaArchivos.js";
 import { crearIncidencia } from "../../services/incidencia.js";
 import { toast } from "react-toastify";
+import { resultadoAPI } from "../../lib/bloquesPermuta.js";
 import { logError } from "../../lib/logger.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationTriangle, faPaperclip, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
@@ -42,8 +43,8 @@ export default function ReportarIncidencia() {
             formData.append("tipo", "archivador")
             formData.append("file", file);
             try {
-                const response = await subidaArchivo(formData);
-                fileId = response?.result?.fileId;
+                fileId = resultadoAPI(await subidaArchivo(formData))?.fileId;
+                if (!fileId) throw new Error("La subida no devolvió un identificador de archivo");
             } catch (error) {
                 toast.error(t("user.report_incident.upload_error"));
                 logError(error);
@@ -51,7 +52,7 @@ export default function ReportarIncidencia() {
             }
         }
         try {
-            await crearIncidencia(descripcion, tipoIncidencia, fileId);
+            resultadoAPI(await crearIncidencia(descripcion, tipoIncidencia, fileId));
             toast.success(t("user.report_incident.success"));
             navigate("/misIncidencias")
         } catch (error) {

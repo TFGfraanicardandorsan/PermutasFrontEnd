@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { agruparBloques } from "../../lib/bloquesPermuta.js";
+import { agruparBloques, resultadoAPI } from "../../lib/bloquesPermuta.js";
 import "../../styles/user-common.css";
 import "../../styles/mispermutas-style.css"; // Mantenemos estilos específicos secundarios si son necesarios
 import {
@@ -64,7 +64,7 @@ export default function MisPermutas() {
 
   const handleDenegarPermuta = async (solicitudId) => {
     try {
-      await denegarPermuta(solicitudId);
+      resultadoAPI(await denegarPermuta(solicitudId));
       setPermutasPropuestas((prev) =>
         prev.filter((permuta) => permuta.permuta_id !== solicitudId)
       );
@@ -77,7 +77,7 @@ export default function MisPermutas() {
 
   const handleAceptarPermuta = async (solicitudId) => {
     try {
-      await validarPermuta(solicitudId);
+      resultadoAPI(await validarPermuta(solicitudId));
       setPermutasPropuestas((prev) =>
         prev.filter((permuta) => permuta.permuta_id !== solicitudId)
       );

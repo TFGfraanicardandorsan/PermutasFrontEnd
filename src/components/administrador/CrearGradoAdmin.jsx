@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { crearEstudio } from "../../services/estudio";
 import "../../styles/CrearGradoAdmin.css"; 
+import { resultadoAPI } from "../../lib/bloquesPermuta.js";
 import { useTranslation } from "react-i18next";
 
 export default function CrearGradoAdmin() {
@@ -19,7 +20,7 @@ export default function CrearGradoAdmin() {
       return;
     }
     try {
-      await crearEstudio(estudio, siglas);
+      resultadoAPI(await crearEstudio(estudio, siglas));
       setMensaje(t("admin.degrees.success"));
       setEstudio("");
       setSiglas("");

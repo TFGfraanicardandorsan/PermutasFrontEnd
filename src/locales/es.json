@@ -146,6 +146,7 @@
     "subject_evaluations": "Valoraciones de asignaturas",
     "user_management": "Gestión de usuarios",
     "group_management": "Gestión de grupos",
+    "subject_management": "Gestión de asignaturas",
     "swap_management": "Gestión de permutas",
     "delegate_management": "Gestión de delegados",
     "delegation_module": "Módulo delegados",
@@ -441,6 +442,7 @@
       "request_error": "Error en la solicitud."
     },
     "subject_selection": {
+      "partial_error": "No se pudieron guardar {{count}} asignaturas. Revisa la selección e inténtalo de nuevo.",
       "saving": "Guardando selección...",
       "title": "Seleccionar Asignaturas",
       "subtitle": "Elige las asignaturas en las que quieres matricularte este curso.",

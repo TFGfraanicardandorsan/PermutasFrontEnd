@@ -39,13 +39,18 @@ const CrearAsignatura = () => {
       return;
     }
     try {
-      await crearAsignatura({
+      // postAPI no lanza: devuelve { err: true } ante errores HTTP o de red.
+      const respuesta = await crearAsignatura({
         nombre: form.nombre,
         siglas: form.siglas,
         curso: form.curso,
         codigo: parseInt(form.codigo),
         estudios_id: parseInt(form.estudios_id)
       });
+      if (respuesta?.err) {
+        setMensaje(t("admin.subjects.error"));
+        return;
+      }
       setMensaje(t("admin.subjects.success"));
       setForm({
         nombre: "",

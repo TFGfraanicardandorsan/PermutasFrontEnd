@@ -81,3 +81,17 @@ export const validarCampoObligatorio = (value, campo) => {
   if (!value.trim()) return `El campo ${campo} es obligatorio`;
   return "";
 };
+
+export const validarAsignatura = (form) => {
+  const errores = {};
+  if (!form.nombre.trim()) errores.nombre = 'Indica el nombre de la asignatura.';
+  else if (form.nombre.trim().length > 100) errores.nombre = 'Máximo 100 caracteres.';
+  if (!form.siglas.trim()) errores.siglas = 'Indica las siglas.';
+  else if (form.siglas.trim().length > 10) errores.siglas = 'Máximo 10 caracteres.';
+  if (!/^\d+$/.test(form.codigo.trim()) || Number(form.codigo) <= 0 || Number(form.codigo) > 2_147_483_647) {
+    errores.codigo = 'El código debe ser un número entero positivo.';
+  }
+  if (!form.curso) errores.curso = 'Selecciona el curso.';
+  if (!form.estudios_id) errores.estudios_id = 'Selecciona el grado.';
+  return errores;
+};

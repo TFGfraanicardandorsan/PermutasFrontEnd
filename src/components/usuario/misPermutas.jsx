@@ -126,9 +126,9 @@ export default function MisPermutas() {
                     <div className="user-card" style={{ height: '100%', borderRadius: '12px' }}>
                       <div className="mispermuta-info">
                         <p><strong><FontAwesomeIcon icon={faInfoCircle} /> {t("common.status")}:</strong> {translateSwapStatus(t, permuta.estado)}</p>
-                        <hr style={{ margin: '10px 0', borderColor: '#eee' }} />
+                        <hr style={{ margin: '10px 0', borderColor: 'var(--ws-line)' }} />
                         <p><strong>{t("common.subject")}:</strong> {permuta.nombre_asignatura} ({permuta.codigo_asignatura})</p>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', background: '#f8fafc', padding: '10px', borderRadius: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', background: 'var(--ws-surface-2)', padding: '10px', borderRadius: '8px' }}>
                           <span><strong>{t("common.from_group")}:</strong> {permuta.grupo_solicitante}</span>
                           <span><strong>{t("common.to_group")}:</strong> {permuta.grupo_solicitado}</span>
                         </div>
@@ -156,9 +156,9 @@ export default function MisPermutas() {
                     <div className="user-card" style={{ height: '100%', borderRadius: '12px' }}>
                       <div className="mispermuta-info">
                         <p><strong><FontAwesomeIcon icon={faInfoCircle} /> {t("common.status")}:</strong> {translateSwapStatus(t, permuta.estado)}</p>
-                        <hr style={{ margin: '10px 0', borderColor: '#eee' }} />
+                        <hr style={{ margin: '10px 0', borderColor: 'var(--ws-line)' }} />
                         <p><strong>{t("common.subject")}:</strong> {permuta.nombre_asignatura} ({permuta.codigo_asignatura})</p>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', background: '#f8fafc', padding: '10px', borderRadius: '8px', marginBottom: '15px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', background: 'var(--ws-surface-2)', padding: '10px', borderRadius: '8px', marginBottom: '15px' }}>
                           <span><strong>{t("common.requester")}:</strong> G. {permuta.grupo_solicitante}</span>
                           <span><strong>{t("common.your_group")}:</strong> G. {permuta.grupo_solicitado}</span>
                         </div>

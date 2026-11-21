@@ -1,12 +1,14 @@
-import { Outlet } from "react-router-dom";
+import ErrorBoundary from "../components/comun/ErrorBoundary.jsx";
+import { Outlet, useLocation } from "react-router-dom";
 import Footer from "../components/comun/footer";
 import NavbarAdmin from "../components/administrador/NavbarAdmin";
 import NavbarDelegacion from "../components/delegacion/NavbarDelegacion";
 import NavbarEstudiante from "../components/usuario/NavbarEstudiante";
 import { useAuth } from "../hooks/useAuth";
-import { ADMIN_ROLE, STUDENT_ROLE, isAllowedRole, isDelegationRole } from "../lib/roles";
+import { ADMIN_ROLE, isAllowedRole, isDelegationRole } from "../lib/roles";
 
 export default function LayoutFeedback() {
+    const { pathname } = useLocation();
     const { user } = useAuth();
 
     const navbar = isAllowedRole(user?.rol, [ADMIN_ROLE])
@@ -16,10 +18,10 @@ export default function LayoutFeedback() {
             : <NavbarEstudiante />;
 
     return (
-        <div className={`app-frame${isAllowedRole(user?.rol, [STUDENT_ROLE]) ? " workspace-student" : ""}`}>
+        <div className="app-frame">
             {navbar}
             <main id="workspace-content" tabIndex={-1} className="workspace-main">
-                <Outlet />
+                <ErrorBoundary key={pathname}><Outlet /></ErrorBoundary>
             </main>
             <Footer />
         </div>

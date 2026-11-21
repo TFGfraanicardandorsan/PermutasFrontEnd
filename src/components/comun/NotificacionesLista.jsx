@@ -25,19 +25,21 @@ export default function NotificacionesLista({ centro, limiteInicial = 20 }) {
       </select>
       <button type="button" className="btn btn-secondary" disabled={guardando || !noLeidas || loading} onClick={marcarTodas}>{t('notificationCenter.markAll')}</button>
     </div>
-    <p className="notification-summary" role="status">{t('notificationCenter.unreadCount', { count: noLeidas })}</p>
+    {!error && <p className="notification-summary" role="status">{t('notificationCenter.unreadCount', { count: noLeidas })}</p>}
     {loading && <p role="status">{t('common.loading')}</p>}
-    {error && <p role="alert">{t('workspace.load_error')} <button type="button" onClick={recargar}>{t('notificationCenter.retry')}</button></p>}
-    {errorLectura && <p role="alert">{t('notificationCenter.saveError')}</p>}
-    {!loading && !error && !filtradas.length && <p>{t('common.no_notifications')}</p>}
+    {error && <p role="alert" className="notification-error">{t('workspace.load_error')} <button type="button" onClick={recargar}>{t('notificationCenter.retry')}</button></p>}
+    {errorLectura && <p role="alert" className="notification-error">{t('notificationCenter.saveError')}</p>}
+    {!loading && !error && !filtradas.length && <p className="notification-empty">{t('common.no_notifications')}</p>}
     {filtradas.slice(0, limite).map(n => <article key={n.id} className={`notification-item ${n.leida ? 'is-read' : 'is-unread'}`}>
       <div className="notification-meta"><span>{t(`notificationCenter.types.${tipos.includes(n.tipo) ? n.tipo : 'ADMINISTRACION'}`)}</span>
         <span className="notification-reading-state">{t(n.leida ? 'notificationCenter.read' : 'notificationCenter.unread')}</span></div>
       <p>{n.contenido}</p>
-      <time dateTime={n.fecha_creacion}>{formatearFecha(n.fecha_creacion)}</time>
-      <div className="notification-actions">
-        {enlaces.has(n.enlace) && <Link to={n.enlace}>{t('notificationCenter.view')}</Link>}
-        <button type="button" disabled={guardando} onClick={() => cambiarLectura(n.id, !n.leida)}>{t(n.leida ? 'notificationCenter.markUnread' : 'notificationCenter.markRead')}</button>
+      <div className="notification-footer">
+        <time dateTime={n.fecha_creacion}>{formatearFecha(n.fecha_creacion)}</time>
+        <div className="notification-actions">
+          {enlaces.has(n.enlace) && <Link to={n.enlace}>{t('notificationCenter.view')} <span aria-hidden="true">→</span></Link>}
+          <button type="button" disabled={guardando} onClick={() => cambiarLectura(n.id, !n.leida)}>{t(n.leida ? 'notificationCenter.markUnread' : 'notificationCenter.markRead')}</button>
+        </div>
       </div>
     </article>)}
     {filtradas.length > limite && <button type="button" className="btn btn-secondary" onClick={() => setLimite(v => v + 20)}>{t('notificationCenter.more')}</button>}

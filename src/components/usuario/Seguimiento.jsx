@@ -1,34 +1,12 @@
-﻿import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { obtenerSolicitudesPermuta, obtenerPermutasPropuestasSistema, obtenerPermutasAgrupadasPorUsuario, misPermutasPropuestas, misPermutasPropuestasPorMi } from '../../services/permuta.js';
-import { agruparBloques, resultadoAPI } from '../../lib/bloquesPermuta.js';
+import useResumenPermutas from '../../hooks/useResumenPermutas.js';
 import { translateRequestStatus, translateSwapStatus } from '../../lib/i18nLabels';
-const sources = [obtenerSolicitudesPermuta, obtenerPermutasPropuestasSistema, obtenerPermutasAgrupadasPorUsuario, misPermutasPropuestas, misPermutasPropuestasPorMi];
 export default function Seguimiento() {
   const { t } = useTranslation();
-  const [data, setData] = useState([[], [], [], [], []]);
-  const [failures, setFailures] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('requests');
-  const load = useCallback(async () => {
-    setLoading(true);
-    const responses = await Promise.allSettled(sources.map(fn => fn()));
-    const failed = [];
-    const lists = responses.map((r, index) => {
-      try { if (r.status === 'rejected') throw r.reason; const list = resultadoAPI(r.value); if (!Array.isArray(list)) throw new Error(); return list; }
-      catch { failed.push(index); return []; }
-    });
-    setData(lists); setFailures(failed); setLoading(false);
-  }, []);
-  useEffect(() => { void load(); }, [load]);
-  // Proposal and request UUIDs belong to separate namespaces; never join them.
-  const requests = agruparBloques(data[0]);
-  const proposals = agruparBloques(data[1]).map(g => ({ ...g, to: '/permutas' }));
-  const proposalIds = new Set(data[1].map(p => String(p.permuta_id)));
-  const manual = [...new Map([...data[3], ...data[4]].filter(p => !proposalIds.has(String(p.permuta_id))).map(p => [String(p.permuta_id), p])).values()];
-  const agreements = [...proposals, ...agruparBloques(manual).map(g => ({ ...g, key: `manual:${g.key}`, to: g.bloque ? '/permutas' : '/misPermutas' }))];
-  const documents = data[2];
+  const { loading, failures, reload: load, requests, agreements, documents } = useResumenPermutas();
   const tabs = [{ key: 'requests', count: requests.length, to: '/misSolicitudesPermuta', failed: failures.includes(0) }, { key: 'agreements', count: agreements.length, to: '/misPermutas', failed: [1, 3, 4].some(i => failures.includes(i)) }, { key: 'documents', count: documents.length, to: '/permutasAceptadas', failed: failures.includes(2) }];
   const selected = tabs.find(x => x.key === tab);
   const rows = tab === 'requests' ? requests : tab === 'agreements' ? agreements : documents.map((d, i) => ({ key: i, miembros: d.permutas || [], to: '/permutasAceptadas' }));

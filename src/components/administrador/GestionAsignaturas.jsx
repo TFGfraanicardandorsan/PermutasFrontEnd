@@ -15,6 +15,8 @@ const etiquetaCurso = (curso) => CURSOS.find(([valor]) => valor === curso)?.[1] 
 const formularioVacio = { nombre: '', siglas: '', codigo: '', curso: '', estudios_id: '' };
 
 const extraer = (respuesta) => respuesta?.result?.result;
+// "Grado en Ingeniería Informática - Ingeniería del Software" → "Ingeniería del Software" (el nombre completo va en el title).
+const nombreCortoGrado = (nombre = '') => nombre.includes(' - ') ? nombre.split(' - ').slice(1).join(' - ') : nombre;
 
 const EstadoGrupos = ({ numGrupos }) => {
   if (numGrupos === 0) return <span className="swap-admin-status status-cancelada">Sin grupos</span>;
@@ -252,7 +254,7 @@ export default function GestionAsignaturas() {
                   <td data-label="Asignatura"><strong>{a.nombre}</strong><small>{a.siglas}</small></td>
                   <td data-label="Código"><span className="subject-admin-code">{a.codigo}</span></td>
                   <td data-label="Curso">{etiquetaCurso(a.curso)}</td>
-                  <td data-label="Grado">{a.grados.length ? a.grados.map((g) => g.nombre).join(', ') : <small>Sin grado</small>}</td>
+                  <td data-label="Grado">{a.grados.length ? <span className="subject-admin-degrees">{a.grados.map((g) => <span key={g.id} className="subject-admin-degree" title={g.nombre}>{nombreCortoGrado(g.nombre)}</span>)}</span> : <small>Sin grado</small>}</td>
                   <td data-label="Grupos"><EstadoGrupos numGrupos={a.num_grupos} /></td>
                   <td data-label="Matriculados" className="subject-admin-num">{a.matriculados}</td>
                   <td data-label="Solicitudes" className="subject-admin-num">{a.solicitudes_vigentes}</td>

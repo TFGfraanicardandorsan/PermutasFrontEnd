@@ -12,6 +12,10 @@ import {
   postDlgaJson,
 } from "../../services/dlgaCertificados.js";
 import { signPdfDocuments } from "../../services/autofirma.js";
+import PropTypes from "prop-types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleCheck, faDownload, faEnvelope, faEnvelopeOpenText, faFileCsv, faFilePdf, faPaperPlane, faSignature, faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
+import PageHeader from "../comun/PageHeader.jsx";
 import "../../styles/delegacion-certificados-style.css";
 
 const DEFAULT_SENDER = "delegacion_etsii@us.es";
@@ -33,6 +37,19 @@ const normalizeCsvHeader = (value) =>
     .replace(/^"|"$/g, "")
     .trim()
     .toLowerCase();
+
+// Bloque numerado de la página. Se define fuera del componente para que los campos no pierdan el foco.
+const Paso = ({ n, titulo, ayuda, children, aside }) => (
+  <section className="cert-step" aria-labelledby={`cert-step-${n}`}>
+    <div className="cert-step-head">
+      <span className="cert-step-number" aria-hidden="true">{n}</span>
+      <div className="cert-step-copy"><h2 id={`cert-step-${n}`}>{titulo}</h2><p>{ayuda}</p></div>
+      {aside}
+    </div>
+    <div className="cert-step-body">{children}</div>
+  </section>
+);
+Paso.propTypes = { n: PropTypes.number, titulo: PropTypes.string, ayuda: PropTypes.string, children: PropTypes.node, aside: PropTypes.node };
 
 export default function CertificadosDelegacion() {
   const { t } = useTranslation();
@@ -204,191 +221,101 @@ export default function CertificadosDelegacion() {
     window.open(`${dlgaPublicUrl}/auth/microsoft/login`, "_blank", "noopener,noreferrer");
   };
 
+  const cargando = (accion, texto, textoCargando) => (loadingAction === accion ? textoCargando : texto);
+
   return (
-    <div className="delegacion-page">
-      <div className="delegacion-content">
-        <header className="delegacion-header">
-          <div className="delegacion-brand-row">
-            <img src="/assets/dlga/dlga.png" alt="DLGA" className="delegacion-logo" />
-            <img
-              src="/assets/logo-etsii-color.png"
-              alt={t("footer.school_name")}
-              className="delegacion-etsii-logo"
-            />
+    <div className="workspace-page cert-page">
+      <PageHeader
+        eyebrow={t("delegation.certificates.kicker")}
+        title={t("delegation.certificates.title")}
+        description={t("delegation.certificates.intro")}
+        actions={<img src="/assets/dlga/dlga.png" alt="DLGA" className="cert-dlga-logo" />}
+      />
+
+      <form ref={formRef} className="cert-form" onSubmit={(event) => event.preventDefault()} aria-busy={isLoading}>
+        <input type="hidden" name="smtp_host" value={DEFAULT_SMTP_HOST} />
+        <input type="hidden" name="smtp_port" value={DEFAULT_SMTP_PORT} />
+
+        <Paso n={1} titulo={t("delegation.certificates.sections.batch")} ayuda={t("delegation.certificates.step_batch_help")}
+          aside={<button type="button" className="btn btn-secondary btn-sm" onClick={handleTemplateDownload} disabled={isLoading}>
+            <FontAwesomeIcon icon={faDownload} /> {t("delegation.certificates.buttons.csv_template")}</button>}>
+          <div className="cert-grid">
+            <label className="cert-file cert-field-wide">
+              <input name="archivo" type="file" accept=".csv,text/csv" onChange={(event) => setArchivo(event.target.files?.[0] || null)} required />
+              <FontAwesomeIcon icon={archivo ? faCircleCheck : faFileCsv} aria-hidden="true" />
+              <span><strong>{archivo ? archivo.name : t("delegation.certificates.file_choose")}</strong>
+                <small>{archivo ? t("delegation.certificates.file_change") : t("delegation.certificates.file_hint")}</small></span>
+            </label>
+            <label className="cert-field">
+              <span>{t("delegation.certificates.fields.signer")}</span>
+              <input name="firmante" type="text" value={firmante} onChange={(event) => setFirmante(event.target.value)}
+                placeholder={t("delegation.certificates.placeholders.signer")} required />
+            </label>
+            <label className="cert-field">
+              <span>{t("delegation.certificates.fields.request_date")}</span>
+              <input name="fecha_solicitud" type="date" value={fechaSolicitud} onChange={(event) => setFechaSolicitud(event.target.value)} />
+            </label>
           </div>
-          <div>
-            <p className="delegacion-kicker">{t("delegation.certificates.kicker")}</p>
-            <h1>{t("delegation.certificates.title")}</h1>
+        </Paso>
+
+        <Paso n={2} titulo={t("delegation.certificates.step_generate")} ayuda={t("delegation.certificates.step_generate_help")}>
+          <div className="cert-actions">
+            <button type="button" className="btn btn-primary" onClick={() => handleDownloadAction("generar")} disabled={isLoading}>
+              <FontAwesomeIcon icon={faFilePdf} /> {cargando("generar", t("delegation.certificates.buttons.generate_pdfs"), t("delegation.certificates.buttons.generating"))}
+            </button>
+            <button type="button" className="btn btn-secondary" onClick={() => handleDownloadAction("preparar-correos")} disabled={isLoading}>
+              <FontAwesomeIcon icon={faEnvelopeOpenText} /> {t("delegation.certificates.buttons.outlook_emails")}
+            </button>
           </div>
-        </header>
+        </Paso>
 
-        <form ref={formRef} className="delegacion-form" onSubmit={(event) => event.preventDefault()}>
-          <input type="hidden" name="smtp_host" value={DEFAULT_SMTP_HOST} />
-          <input type="hidden" name="smtp_port" value={DEFAULT_SMTP_PORT} />
-
-          <section className="delegacion-section">
-            <div className="delegacion-section-header">
-              <h2>{t("delegation.certificates.sections.batch")}</h2>
-              <button
-                type="button"
-                className="delegacion-button delegacion-button-secondary"
-                onClick={handleTemplateDownload}
-                disabled={isLoading}
-              >
-                {t("delegation.certificates.buttons.csv_template")}
-              </button>
-            </div>
-
-            <div className="delegacion-grid">
-              <label className="delegacion-field delegacion-field-wide">
-                <span>CSV</span>
-                <input
-                  name="archivo"
-                  type="file"
-                  accept=".csv,text/csv"
-                  onChange={(event) => setArchivo(event.target.files?.[0] || null)}
-                  required
-                />
-              </label>
-
-              <label className="delegacion-field">
-                <span>{t("delegation.certificates.fields.signer")}</span>
-                <input
-                  name="firmante"
-                  type="text"
-                  value={firmante}
-                  onChange={(event) => setFirmante(event.target.value)}
-                  placeholder={t("delegation.certificates.placeholders.signer")}
-                  required
-                />
-              </label>
-
-              <label className="delegacion-field">
-                <span>{t("delegation.certificates.fields.request_date")}</span>
-                <input
-                  name="fecha_solicitud"
-                  type="date"
-                  value={fechaSolicitud}
-                  onChange={(event) => setFechaSolicitud(event.target.value)}
-                />
-              </label>
-            </div>
-          </section>
-
-          <section className="delegacion-section delegacion-email-section">
-            <div className="delegacion-section-header">
-              <h2>{t("delegation.certificates.sections.email")}</h2>
-              <label className="delegacion-checkline">
-                <input
-                  name="enviar_email"
-                  type="checkbox"
-                  value="1"
-                  checked={enviarEmail}
-                  onChange={(event) => setEnviarEmail(event.target.checked)}
-                />
-                {t("delegation.certificates.fields.send_on_generate")}
-              </label>
-            </div>
-
-            <div className="delegacion-grid">
-              <label className="delegacion-field">
-                <span>{t("delegation.certificates.fields.sender")}</span>
-                <input
-                  name="remitente_email"
-                  type="email"
-                  value={remitenteEmail}
-                  onChange={(event) => setRemitenteEmail(event.target.value)}
-                />
-              </label>
-
-              <label className="delegacion-field">
-                <span>{t("delegation.certificates.fields.smtp_password")}</span>
-                <input
-                  name="password_email"
-                  type="password"
-                  value={passwordEmail}
-                  onChange={(event) => setPasswordEmail(event.target.value)}
-                  autoComplete="current-password"
-                />
-              </label>
-            </div>
-          </section>
-
-          <section className="delegacion-actions" aria-label={t("delegation.certificates.actions_label")}>
-            <button
-              type="button"
-              className="delegacion-button delegacion-button-secondary"
-              onClick={() => handleDownloadAction("preparar-correos")}
-              disabled={isLoading}
-            >
-              {t("delegation.certificates.buttons.outlook_emails")}
+        <Paso n={3} titulo={t("delegation.certificates.step_sign")} ayuda={t("delegation.certificates.step_sign_help")}>
+          <div className="cert-actions">
+            <button type="button" className="btn btn-primary" onClick={() => handleDownloadAction("firmar-lote")} disabled={isLoading}>
+              <FontAwesomeIcon icon={faSignature} /> {cargando("firmar-lote", t("delegation.certificates.buttons.sign_batch"), t("delegation.certificates.buttons.signing_batch"))}
             </button>
-            <button
-              type="button"
-              className="delegacion-button delegacion-button-primary"
-              onClick={() => handleDownloadAction("generar")}
-              disabled={isLoading}
-            >
-              {loadingAction === "generar"
-                ? t("delegation.certificates.buttons.generating")
-                : t("delegation.certificates.buttons.generate_pdfs")}
-            </button>
-            <button
-              type="button"
-              className="delegacion-button delegacion-button-primary"
-              onClick={handleTelegramAction}
-              disabled={isLoading}
-            >
-              {loadingAction === "telegram"
-                ? t("delegation.certificates.buttons.sending_telegram")
-                : t("delegation.certificates.buttons.generate_and_send_telegram")}
-            </button>
-            <button
-              type="button"
-              className="delegacion-button delegacion-button-primary"
-              onClick={() => handleDownloadAction("firmar-lote")}
-              disabled={isLoading}
-            >
-              {loadingAction === "firmar-lote"
-                ? t("delegation.certificates.buttons.signing_batch")
-                : t("delegation.certificates.buttons.sign_batch")}
-            </button>
-          </section>
+          </div>
+        </Paso>
 
-          <section className="delegacion-section delegacion-graph-section">
-            <div>
-              <h2>{t("delegation.certificates.sections.graph")}</h2>
-              <p>{dlgaPublicUrl}</p>
-            </div>
-            <div className="delegacion-graph-actions">
-              <button
-                type="button"
-                className="delegacion-button delegacion-button-secondary"
-                onClick={openMicrosoftLogin}
-                disabled={isLoading}
-              >
-                {t("delegation.certificates.buttons.connect_microsoft")}
+        <Paso n={4} titulo={t("delegation.certificates.step_send")} ayuda={t("delegation.certificates.step_send_help")}>
+          <div className="cert-channels">
+            <article className="cert-channel">
+              <h3><FontAwesomeIcon icon={faPaperPlane} /> Telegram</h3>
+              <p>{t("delegation.certificates.telegram_hint")}</p>
+              <button type="button" className="btn btn-primary" onClick={handleTelegramAction} disabled={isLoading}>
+                {cargando("telegram", t("delegation.certificates.buttons.generate_and_send_telegram"), t("delegation.certificates.buttons.sending_telegram"))}
               </button>
-              <button
-                type="button"
-                className="delegacion-button delegacion-button-secondary"
-                onClick={() => submitExternalAction("enviar-graph")}
-                disabled={isLoading}
-              >
-                {t("delegation.certificates.buttons.send_graph")}
-              </button>
-              <button
-                type="button"
-                className="delegacion-button delegacion-button-primary"
-                onClick={() => submitExternalAction("firmar-lote", { email_transport: "graph" })}
-                disabled={isLoading}
-              >
-                {t("delegation.certificates.buttons.sign_and_send_graph")}
-              </button>
-            </div>
-          </section>
-        </form>
-      </div>
+            </article>
+            <article className="cert-channel">
+              <h3><FontAwesomeIcon icon={faCloudArrowUp} /> {t("delegation.certificates.sections.graph")}</h3>
+              <p>{t("delegation.certificates.graph_hint")}</p>
+              <div className="cert-actions">
+                <button type="button" className="btn btn-secondary" onClick={openMicrosoftLogin} disabled={isLoading}>{t("delegation.certificates.buttons.connect_microsoft")}</button>
+                <button type="button" className="btn btn-secondary" onClick={() => submitExternalAction("enviar-graph")} disabled={isLoading}>{t("delegation.certificates.buttons.send_graph")}</button>
+                <button type="button" className="btn btn-primary" onClick={() => submitExternalAction("firmar-lote", { email_transport: "graph" })} disabled={isLoading}>{t("delegation.certificates.buttons.sign_and_send_graph")}</button>
+              </div>
+            </article>
+            <article className="cert-channel cert-channel-wide">
+              <h3><FontAwesomeIcon icon={faEnvelope} /> {t("delegation.certificates.sections.email")}</h3>
+              <p>{t("delegation.certificates.smtp_hint")}</p>
+              <div className="cert-grid">
+                <label className="cert-field">
+                  <span>{t("delegation.certificates.fields.sender")}</span>
+                  <input name="remitente_email" type="email" value={remitenteEmail} onChange={(event) => setRemitenteEmail(event.target.value)} />
+                </label>
+                <label className="cert-field">
+                  <span>{t("delegation.certificates.fields.smtp_password")}</span>
+                  <input name="password_email" type="password" value={passwordEmail} onChange={(event) => setPasswordEmail(event.target.value)} autoComplete="current-password" />
+                </label>
+                <label className="cert-check cert-field-wide">
+                  <input name="enviar_email" type="checkbox" value="1" checked={enviarEmail} onChange={(event) => setEnviarEmail(event.target.checked)} />
+                  {t("delegation.certificates.fields.send_on_generate")}
+                </label>
+              </div>
+            </article>
+          </div>
+        </Paso>
+      </form>
     </div>
   );
 }

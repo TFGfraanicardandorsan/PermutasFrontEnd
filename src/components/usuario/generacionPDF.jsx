@@ -832,7 +832,7 @@ export default function GeneracionPDF() {
                 title={t("pdf_generation.preview_title")}
               />
             ) : (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '300px', backgroundColor: '#f8f9fa', color: '#6c757d' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '300px', backgroundColor: 'var(--ws-surface-2)', color: 'var(--ws-muted)' }}>
                 <p>{t("pdf_generation.buttons.visualize")}...</p>
               </div>
             )}

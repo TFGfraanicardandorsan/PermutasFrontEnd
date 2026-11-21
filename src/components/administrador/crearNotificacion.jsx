@@ -93,10 +93,10 @@ export default function CrearNotificacion() {
                                             required
                                         >
                                             <option value="">{t("admin.notifications.select_recipient")}</option>
-                                            <option value="all">👥 {t("common.roles_plural.all")}</option>
-                                            <option value="estudiante">🎓 {t("common.roles_plural.estudiante")}</option>
-                                            <option value="administrador">👔 {t("common.roles_plural.administrador")}</option>
-                                            <option value="delegacion">📄 {t("common.roles_plural.delegacion")}</option>
+                                            <option value="all">{t("common.roles_plural.all")}</option>
+                                            <option value="estudiante">{t("common.roles_plural.estudiante")}</option>
+                                            <option value="administrador">{t("common.roles_plural.administrador")}</option>
+                                            <option value="delegacion">{t("common.roles_plural.delegacion")}</option>
                                         </select>
                                     </div>
 
@@ -128,7 +128,7 @@ export default function CrearNotificacion() {
                                             }}
                                             disabled={enviando}
                                         >
-                                            🗑️ {t("common.clear")}
+                                            {t("common.clear")}
                                         </button>
                                         <button
                                             type="submit"

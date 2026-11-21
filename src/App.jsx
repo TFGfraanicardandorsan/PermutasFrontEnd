@@ -44,6 +44,7 @@ import PanelGestionGrupos from "./components/administrador/panelGestionGrupos.js
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import { useTranslation } from "react-i18next";
 import CertificadosDelegacion from "./components/delegacion/CertificadosDelegacion.jsx";
+import HomeDelegacion from "./components/delegacion/HomeDelegacion.jsx";
 import EncuestaSatisfaccion from "./components/comun/EncuestaSatisfaccion.jsx";
 import GestionFeedback from "./components/administrador/GestionFeedback.jsx";
 import GestionPermutas from "./components/administrador/GestionPermutas.jsx";
@@ -125,7 +126,7 @@ function AppContent() {
 
           {/* Layout para delegacion */}
           <Route element={<RoleRoute allowedRoles={[ADMIN_ROLE, ...DELEGATION_ROLES]}><LayoutDelegacion /></RoleRoute>}>
-            <Route path="/delegacion" element={<CertificadosDelegacion />} />
+            <Route path="/delegacion" element={<HomeDelegacion />} />
             <Route path="/delegacion/certificados" element={<CertificadosDelegacion />} />
           </Route>
         </Routes>

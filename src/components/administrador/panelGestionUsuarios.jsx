@@ -204,7 +204,7 @@ const UserManagementPanel = () => {
                                             className="admin-btn admin-btn-primary admin-btn-sm"
                                             onClick={() => handleOpenModal(user)}
                                         >
-                                            ✏️ {t("common.edit")}
+                                            {t("common.edit")}
                                         </button>
                                     </div>
                                 </div>
